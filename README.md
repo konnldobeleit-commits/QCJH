@@ -55,3 +55,41 @@ Eine ROC-Kurve wird optional als PNG in `runs/roc_curve.png` gespeichert, wenn `
 
 ## Inferenz-Idee (Heatmaps)
 Aktuell liegt ein Validierungs-Skript vor. Für ganze Heatmaps kannst du das Diskriminator-Ausgabeprinzip aus `validate_draem_xriu.py` auf überlappende Kacheln übertragen (analog zum Tiling-Schritt), um pixelweise Anomaliewahrscheinlichkeiten über das gesamte Bild zu erhalten.
+
+## Windows-Executable (xr_tools.exe)
+Du kannst die wichtigsten Funktionen (Tiling/Training/Validierung) als `.exe` bündeln. Auf einem Windows-System mit installiertem Python 3.10+ gehst du wie folgt vor:
+
+```bash
+pip install --upgrade pip
+pip install torch torchvision torchaudio scikit-learn matplotlib pillow numpy pyinstaller
+
+# Im Repository-Hauptverzeichnis
+pyinstaller xr_cli.spec --clean
+```
+
+Nach dem Build liegt `dist/xr_tools/xr_tools.exe`. Beispiele für die Nutzung (PowerShell oder CMD):
+
+```bash
+# Tiling
+dist\xr_tools\xr_tools.exe tile ^
+  --xr_path data\raw\P0279RoentgenGesamt.bmp ^
+  --ir_path data\raw\P0279_Infrarot_gesamt.tif ^
+  --uv_path data\raw\P0279_UV_gesamt.tif ^
+  --out_dir data\patches\train\normal ^
+  --patch_size 512 --overlap 256
+
+# Training
+dist\xr_tools\xr_tools.exe train ^
+  --data_dir data\patches\train\normal ^
+  --num_epochs 50 --batch_size 16
+
+# Validierung
+dist\xr_tools\xr_tools.exe validate ^
+  --img_dir data\patches\val\images ^
+  --mask_dir data\patches\val\masks ^
+  --checkpoint_path runs\checkpoints\xr_draem_epoch049.pt
+```
+
+Hinweise:
+- Das gebaute Binary nutzt CUDA nur, wenn auf dem Windows-System der passende NVIDIA-Treiber und eine kompatible PyTorch-Build installiert sind.
+- Das Packaging muss auf Windows erfolgen (PyInstaller unterstützt kein Cross-Compile von Linux nach Windows).
