@@ -64,13 +64,24 @@ def tile_triplet(
 
 
 def main() -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Tile XR/IR/UV Vollbilder in 3-Kanal-Patches")
+    parser.add_argument("--xr_path", default="data/raw/P0279RoentgenGesamt.bmp", help="Pfad zum XR-Bild")
+    parser.add_argument("--ir_path", default="data/raw/P0279_Infrarot_gesamt.tif", help="Pfad zum IR-Bild")
+    parser.add_argument("--uv_path", default="data/raw/P0279_UV_gesamt.tif", help="Pfad zum UV-Bild")
+    parser.add_argument("--out_dir", default="data/patches/train/normal", help="Ausgabeverzeichnis für Patches")
+    parser.add_argument("--patch_size", type=int, default=512, help="Patchgröße in Pixeln")
+    parser.add_argument("--overlap", type=int, default=256, help="Überlappung in Pixeln")
+
+    args = parser.parse_args()
     tile_triplet(
-        xr_path="data/raw/P0279RoentgenGesamt.bmp",
-        ir_path="data/raw/P0279_Infrarot_gesamt.tif",
-        uv_path="data/raw/P0279_UV_gesamt.tif",
-        out_dir="data/patches/train/normal",
-        patch_size=512,
-        overlap=256,
+        xr_path=args.xr_path,
+        ir_path=args.ir_path,
+        uv_path=args.uv_path,
+        out_dir=args.out_dir,
+        patch_size=args.patch_size,
+        overlap=args.overlap,
     )
 
 

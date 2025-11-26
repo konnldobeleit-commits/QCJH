@@ -118,7 +118,33 @@ def validate(
 
 
 def main() -> None:
-    validate()
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Validierung für XR/IR/UV DRAEM")
+    parser.add_argument("--img_dir", default="data/patches/val/images", help="Ordner mit Validierungsbildern")
+    parser.add_argument("--mask_dir", default="data/patches/val/masks", help="Ordner mit GT-Masken")
+    parser.add_argument(
+        "--checkpoint_path",
+        default="runs/checkpoints/xr_draem_epoch049.pt",
+        help="Pfad zum gespeicherten Modell",
+    )
+    parser.add_argument("--batch_size", type=int, default=8, help="Batch-Größe")
+    parser.add_argument(
+        "--iou_thresholds",
+        type=float,
+        nargs="+",
+        default=(0.3, 0.5, 0.7),
+        help="IoU-Schwellenwerte",
+    )
+
+    args = parser.parse_args()
+    validate(
+        img_dir=args.img_dir,
+        mask_dir=args.mask_dir,
+        checkpoint_path=args.checkpoint_path,
+        batch_size=args.batch_size,
+        iou_thresholds=args.iou_thresholds,
+    )
 
 
 if __name__ == "__main__":
