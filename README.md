@@ -93,3 +93,12 @@ dist\xr_tools\xr_tools.exe validate ^
 Hinweise:
 - Das gebaute Binary nutzt CUDA nur, wenn auf dem Windows-System der passende NVIDIA-Treiber und eine kompatible PyTorch-Build installiert sind.
 - Das Packaging muss auf Windows erfolgen (PyInstaller unterstützt kein Cross-Compile von Linux nach Windows).
+
+## Zip-Archiv zum Weitergeben
+Wenn du das komplette Projekt (Quellcode, CLI-Spec, Dokumentation) als Zip-Archiv bereitstellen möchtest, kannst du es direkt generieren:
+
+```bash
+python create_bundle_zip.py --output xr_tools_bundle.zip
+```
+
+Standardmäßig landen `README.md`, das gesamte `src/`-Verzeichnis und die `xr_cli.spec` im Archiv. Über `--include` kannst du zusätzliche Pfade anhängen. Das erzeugte Archiv liegt anschließend im Repository-Hauptordner und lässt sich weitergeben oder auf ein Zielsystem kopieren.
