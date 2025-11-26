@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.pyo
+*.DS_Store
+runs/
+dist/
+build/
+xr_tools_bundle.zip

@@ -1,0 +1,6 @@
+# Minimal dependencies beyond the NVIDIA PyTorch base image
+# Torch/Torchvision/Torchaudio are already included in most nvcr.io/nvidia/pytorch images.
+scikit-learn
+matplotlib
+pillow
+numpy
