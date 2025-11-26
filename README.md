@@ -94,6 +94,39 @@ Hinweise:
 - Das gebaute Binary nutzt CUDA nur, wenn auf dem Windows-System der passende NVIDIA-Treiber und eine kompatible PyTorch-Build installiert sind.
 - Das Packaging muss auf Windows erfolgen (PyInstaller unterstützt kein Cross-Compile von Linux nach Windows).
 
+## NVIDIA AI Workbench (GPU-Workflow)
+So bekommst du das Toolkit in einer Workbench-Session lauffähig:
+
+1. **Projekt öffnen/importieren**: Repository in Workbench als Projekt einbinden. Als Basis-Container eignet sich z. B. `nvcr.io/nvidia/pytorch:24.07-py3` (enthält bereits PyTorch + CUDA).
+2. **Abhängigkeiten installieren**: Im Projekt-Container einmalig das Setup-Skript ausführen:
+   ```bash
+   ./workbench_setup.sh
+   ```
+   Dadurch werden die zusätzlichen Python-Pakete aus `requirements_workbench.txt` installiert und ein kurzer CUDA-Sanity-Check ausgegeben.
+3. **Datenspeicher bereitstellen**: Lege deine Vollbilder in `data/raw/` ab. Stelle sicher, dass der Workbench-Container auf das Verzeichnis (lokal oder via „Datasets“) Zugriff hat.
+4. **Pipeline ausführen**: Innerhalb der Workbench-Shell kannst du direkt den CLI-Einstiegspunkt nutzen, z. B.:
+   ```bash
+   # Tiling
+   python src/xr_cli.py tile \
+     --xr_path data/raw/P0279RoentgenGesamt.bmp \
+     --ir_path data/raw/P0279_Infrarot_gesamt.tif \
+     --uv_path data/raw/P0279_UV_gesamt.tif \
+     --out_dir data/patches/train/normal
+
+   # Kurzes Smoke-Test-Training (kleine Epochen- und Batch-Size-Werte für den ersten Lauf)
+   python src/xr_cli.py train --data_dir data/patches/train/normal --num_epochs 2 --batch_size 4
+
+   # Validierung mit manuellen Masken
+   python src/xr_cli.py validate \
+     --img_dir data/patches/val/images \
+     --mask_dir data/patches/val/masks \
+     --checkpoint_path runs/checkpoints/xr_draem_epoch049.pt
+   ```
+
+Tipps für Workbench:
+- Wenn du persistenten Speicher nutzt, binde `data/` als Dataset/Lokales Verzeichnis ein, damit Checkpoints und Heatmaps erhalten bleiben.
+- Falls du ein Windows-Hostsystem hast, kannst du weiterhin per PyInstaller eine `.exe` bauen, brauchst das aber für Workbench nicht – dort läuft alles im Container.
+
 ## Zip-Archiv zum Weitergeben
 Wenn du das komplette Projekt (Quellcode, CLI-Spec, Dokumentation) als Zip-Archiv bereitstellen möchtest, kannst du es direkt generieren:
 

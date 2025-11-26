@@ -18,6 +18,8 @@ import zipfile
 BASE_DIR = Path(__file__).resolve().parent
 DEFAULT_INCLUDE = [
     "README.md",
+    "requirements_workbench.txt",
+    "workbench_setup.sh",
     "src",
     "xr_cli.spec",
 ]
